@@ -5,7 +5,7 @@ type Error = {
   statusCode: string;
 };
 
-export const customFetch = async (url: string, options: RequestInit) => {
+const customFetch = async (url: string, options: RequestInit) => {
   const accessToken = localStorage.getItem("accessToken");
   const headers = options.headers as Record<string, string>;
 
@@ -20,7 +20,7 @@ export const customFetch = async (url: string, options: RequestInit) => {
   });
 };
 
-export const getGraphQLErrors = (
+const getGraphQLErrors = (
   body: Record<"errors", Array<GraphQLFormattedError>> | undefined,
 ): Error | null => {
   if (body == null) {
@@ -43,4 +43,18 @@ export const getGraphQLErrors = (
   }
 
   return null;
+};
+
+export const fetchWrapper = async (url: string, options: RequestInit) => {
+  const response = await customFetch(url, options);
+
+  const responseClone = response.clone();
+  const body = await responseClone.json();
+  const error = getGraphQLErrors(body);
+
+  if (error != null) {
+    throw error;
+  }
+
+  return response;
 };

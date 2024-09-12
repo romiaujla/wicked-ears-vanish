@@ -1,8 +1,8 @@
 import { GraphQLClient } from "@refinedev/nestjs-query";
-import { customFetch, getGraphQLErrors } from "./fetch-wrapper";
-import { get } from "http";
+import { fetchWrapper } from "./fetch-wrapper";
 
 export const API_URL = "https://api.crm.refine.dev/";
+
 export const client = new GraphQLClient(API_URL, {
   fetch: (url: string, options: RequestInit) => {
     try {
@@ -12,17 +12,3 @@ export const client = new GraphQLClient(API_URL, {
     }
   },
 });
-
-const fetchWrapper = async (url: string, options: RequestInit) => {
-  const response = await customFetch(url, options);
-
-  const responseClone = response.clone();
-  const body = await responseClone.json();
-  const error = getGraphQLErrors(body);
-
-  if (error != null) {
-    throw error;
-  }
-
-  return response;
-};
