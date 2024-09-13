@@ -40,6 +40,8 @@ export const authProvider: AuthProvider = {
     } catch (e) {
       const error = e as Error;
 
+      console.error(e);
+
       return {
         success: false,
         error: {
